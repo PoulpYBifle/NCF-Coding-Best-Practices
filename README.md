@@ -13,3 +13,4 @@ Dépôt des bonnes pratiques de développement pour NCF.
 | [Qualité du code](docs/qualite-code.md) | Husky, ESLint, Prettier, Vitest, TDD |
 | [Git & GitHub](docs/git-workflow.md) | Commits, branches, PR |
 | [Outils Claude](docs/outils-claude.md) | MCP, Skills, CLAUDE.md, configs |
+| [Structure des templates](docs/template-structure.md) | Architecture du CLI et des templates de projet |
