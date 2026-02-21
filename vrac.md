@@ -53,6 +53,8 @@ Claude configs :
 - project (.claude)
 - Statusline (https://github.com/chongdashu/cc-statusline)
 
+Tools / Libs :
+- Onboarding Tours : https://driverjs.com/
 
 Ressources / prompts : 
 https://supabase.com/docs/guides/getting-started/ai-prompts
