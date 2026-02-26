@@ -9,6 +9,7 @@ import {
   ALL_AI_TOOLS,
   ALL_COMMANDS,
   ALL_DOCS,
+  ALL_OPTIONAL_PACKAGES,
 } from "./constants.js";
 import type { UserChoices } from "./types.js";
 
@@ -49,6 +50,9 @@ program
         docs: preset.docs,
         includeConstitution: preset.includeConstitution,
         includeSkillsGuide: preset.includeSkillsGuide,
+        scaffoldProject: preset.scaffoldProject,
+        dxTooling: preset.dxTooling,
+        packages: preset.packages,
         force,
       };
     }
@@ -65,6 +69,9 @@ program
         docs: ALL_DOCS,
         includeConstitution: true,
         includeSkillsGuide: true,
+        scaffoldProject: true,
+        dxTooling: true,
+        packages: ALL_OPTIONAL_PACKAGES,
         force,
       };
     }
@@ -81,6 +88,9 @@ program
         docs: ALL_DOCS,
         includeConstitution: true,
         includeSkillsGuide: false,
+        scaffoldProject: true,
+        dxTooling: true,
+        packages: [],
         force,
       };
     }

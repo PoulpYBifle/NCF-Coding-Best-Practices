@@ -1,4 +1,4 @@
-import type { AiTool, Command, DocModule } from "./types.js";
+import type { AiTool, Command, DocModule, OptionalPackage, ScaffoldConfig } from "./types.js";
 
 /**
  * Mapping AI tool → fichiers a copier.
@@ -170,3 +170,95 @@ export const ALL_AI_TOOLS: AiTool[] = [
   "windsurf",
   "aider",
 ];
+
+// ── Scaffolding ──
+
+/** Commandes de scaffolding selon frontend + backend */
+export const SCAFFOLD_COMMANDS: Record<string, ScaffoldConfig> = {
+  "nextjs:supabase": {
+    command: "npx create-next-app -e with-supabase",
+    label: "Next.js + Supabase (template officiel)",
+  },
+  "nextjs:convex": {
+    command: "npx create-next-app",
+    label: "Next.js",
+  },
+  "nextjs:sqlite": {
+    command: "npx create-next-app",
+    label: "Next.js",
+  },
+  "nextjs:none": {
+    command: "npx create-next-app",
+    label: "Next.js",
+  },
+  "vite:supabase": {
+    command: "npm create vite@latest",
+    label: "Vite (React + TypeScript)",
+  },
+  "vite:convex": {
+    command: "npm create vite@latest",
+    label: "Vite (React + TypeScript)",
+  },
+  "vite:sqlite": {
+    command: "npm create vite@latest",
+    label: "Vite (React + TypeScript)",
+  },
+  "vite:none": {
+    command: "npm create vite@latest",
+    label: "Vite (React + TypeScript)",
+  },
+  "astro:supabase": {
+    command: "npm create astro@latest",
+    label: "Astro",
+  },
+  "astro:convex": {
+    command: "npm create astro@latest",
+    label: "Astro",
+  },
+  "astro:sqlite": {
+    command: "npm create astro@latest",
+    label: "Astro",
+  },
+  "astro:none": {
+    command: "npm create astro@latest",
+    label: "Astro",
+  },
+};
+
+// ── DX Tooling ──
+
+/** Packages DX a installer en devDependencies */
+export const DX_PACKAGES = [
+  "eslint",
+  "eslint-config-next",
+  "eslint-config-prettier",
+  "prettier",
+  "prettier-plugin-tailwindcss",
+  "husky",
+  "lint-staged",
+  "@commitlint/cli",
+  "@commitlint/config-conventional",
+  "vitest",
+  "@testing-library/react",
+];
+
+/** Fichiers de config DX a copier (src dans templates/, dest dans projet) */
+export const DX_CONFIG_FILES = [
+  { src: "configs/.prettierrc", dest: ".prettierrc" },
+  { src: "configs/eslint.config.mjs", dest: "eslint.config.mjs" },
+  { src: "configs/commitlint.config.mjs", dest: "commitlint.config.mjs" },
+  { src: "configs/lint-staged.config.mjs", dest: "lint-staged.config.mjs" },
+  { src: "configs/.vscode/settings.json", dest: ".vscode/settings.json" },
+];
+
+// ── Packages optionnels ──
+
+export const OPTIONAL_PACKAGE_LABELS: Record<OptionalPackage, string> = {
+  bmad: "BMAD Method (methode de prompting structuree)",
+};
+
+export const OPTIONAL_PACKAGE_COMMANDS: Record<OptionalPackage, string> = {
+  bmad: "npx bmad-method install",
+};
+
+export const ALL_OPTIONAL_PACKAGES: OptionalPackage[] = ["bmad"];

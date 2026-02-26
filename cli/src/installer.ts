@@ -1,8 +1,21 @@
+import { execSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
 import { copy, ensureDir, pathExists } from "fs-extra";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import pc from "picocolors";
-import { AI_TOOL_FILES, AI_TOOL_LABELS, CLAUDE_SKILL_FILES, COMMAND_FILES, DOC_FILES } from "./constants.js";
+import {
+  AI_TOOL_FILES,
+  AI_TOOL_LABELS,
+  CLAUDE_SKILL_FILES,
+  COMMAND_FILES,
+  DOC_FILES,
+  DX_CONFIG_FILES,
+  DX_PACKAGES,
+  OPTIONAL_PACKAGE_COMMANDS,
+  OPTIONAL_PACKAGE_LABELS,
+  SCAFFOLD_COMMANDS,
+} from "./constants.js";
 import type { UserChoices } from "./types.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -10,6 +23,27 @@ const __dirname = path.dirname(__filename);
 
 function getTemplatesDir(): string {
   return path.resolve(__dirname, "..", "templates");
+}
+
+function detectPackageManager(): "bun" | "npm" {
+  try {
+    execSync("bun --version", { stdio: "ignore" });
+    return "bun";
+  } catch {
+    return "npm";
+  }
+}
+
+function runCommand(cmd: string, cwd: string, label: string): boolean {
+  console.log(pc.dim(`  $ ${cmd}`));
+  try {
+    execSync(cmd, { cwd, stdio: "inherit" });
+    console.log(pc.green(`  ✓ ${label}`));
+    return true;
+  } catch {
+    console.log(pc.red(`  ✗ Echec : ${label}`));
+    return false;
+  }
 }
 
 async function copyFile(
@@ -51,6 +85,19 @@ export async function install(choices: UserChoices): Promise<void> {
   if (!choices.force && (await pathExists(path.join(targetDir, ".ncf")))) {
     console.log(pc.yellow("Le dossier .ncf/ existe deja. Utilisez --force pour ecraser."));
     process.exit(1);
+  }
+
+  // ── 0. Scaffolding projet ──
+  if (choices.scaffoldProject) {
+    const scaffoldKey = `${choices.frontend}:${choices.backend}`;
+    const scaffoldConfig = SCAFFOLD_COMMANDS[scaffoldKey];
+
+    if (scaffoldConfig) {
+      console.log(pc.cyan("Scaffolding projet"));
+      const cmd = `${scaffoldConfig.command} ${targetDir}`;
+      runCommand(cmd, process.cwd(), scaffoldConfig.label);
+      console.log();
+    }
   }
 
   // ── 1. AI Tool configs (chaque outil a son emplacement impose) ──
@@ -134,6 +181,57 @@ export async function install(choices: UserChoices): Promise<void> {
     }
   }
 
+  // ── 7. DX Tooling ──
+  if (choices.dxTooling) {
+    console.log(pc.cyan("DX Tooling"));
+
+    const pm = detectPackageManager();
+    const installCmd = pm === "bun" ? "bun add -D" : "npm install -D";
+    const pkgList = DX_PACKAGES.join(" ");
+
+    console.log(pc.dim(`  Package manager detecte : ${pm}`));
+    runCommand(`${installCmd} ${pkgList}`, targetDir, "Installation des devDependencies");
+
+    // Init Husky
+    runCommand("npx husky init", targetDir, "Initialisation Husky");
+
+    // Ecrire les hooks Husky
+    const huskyDir = path.join(targetDir, ".husky");
+    await ensureDir(huskyDir);
+
+    writeFileSync(path.join(huskyDir, "pre-commit"), "npx lint-staged\n", { mode: 0o755 });
+    console.log(pc.green("  + .husky/pre-commit"));
+
+    writeFileSync(
+      path.join(huskyDir, "pre-push"),
+      "npx tsc --noEmit && npx vitest run\n",
+      { mode: 0o755 },
+    );
+    console.log(pc.green("  + .husky/pre-push"));
+
+    // Copier les fichiers de config
+    for (const file of DX_CONFIG_FILES) {
+      const copied = await copyFile(templatesDir, targetDir, file.src, file.dest);
+      if (copied) {
+        console.log(pc.green(`  + ${file.dest}`));
+        fileCount++;
+      }
+    }
+
+    console.log();
+  }
+
+  // ── 8. Packages optionnels ──
+  if (choices.packages.length > 0) {
+    console.log(pc.cyan("Packages optionnels"));
+    for (const pkg of choices.packages) {
+      const cmd = OPTIONAL_PACKAGE_COMMANDS[pkg];
+      const label = OPTIONAL_PACKAGE_LABELS[pkg];
+      runCommand(cmd, targetDir, label);
+    }
+    console.log();
+  }
+
   // ── Resume ──
   console.log();
   console.log(pc.green(pc.bold(`Done! ${fileCount} fichiers copies.`)));
@@ -154,6 +252,15 @@ export async function install(choices: UserChoices): Promise<void> {
     console.log(`  4. ${pc.dim("Skills Claude :")} /ncf-frontend, /ncf-backend, /ncf-review`);
   } else if (choices.commands.length > 0) {
     console.log(`  3. ${pc.dim("Commandes disponibles dans")} .ncf/commands/`);
+  }
+
+  if (choices.dxTooling) {
+    console.log(`  ${pc.dim("DX Tooling installe :")} Husky, lint-staged, Prettier, ESLint, Commitlint, Vitest`);
+  }
+
+  if (choices.packages.length > 0) {
+    const pkgNames = choices.packages.map((pkg) => OPTIONAL_PACKAGE_LABELS[pkg]).join(", ");
+    console.log(`  ${pc.dim("Packages optionnels :")} ${pkgNames}`);
   }
 
   console.log();

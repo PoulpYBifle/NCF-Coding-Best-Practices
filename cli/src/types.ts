@@ -43,12 +43,19 @@ export type DocModule =
   | "gestion-erreurs"
   | "configs-partagees";
 
+export type OptionalPackage = "bmad";
+
 export type PresetName =
   | "fullstack-next"
   | "fullstack-vite"
   | "landing"
   | "minimal"
   | "all";
+
+export interface ScaffoldConfig {
+  command: string;
+  label: string;
+}
 
 export interface UserChoices {
   targetDir: string;
@@ -60,6 +67,9 @@ export interface UserChoices {
   docs: DocModule[];
   includeConstitution: boolean;
   includeSkillsGuide: boolean;
+  scaffoldProject: boolean;
+  dxTooling: boolean;
+  packages: OptionalPackage[];
   force: boolean;
 }
 
@@ -73,4 +83,7 @@ export interface Preset {
   docs: DocModule[];
   includeConstitution: boolean;
   includeSkillsGuide: boolean;
+  scaffoldProject: boolean;
+  dxTooling: boolean;
+  packages: OptionalPackage[];
 }

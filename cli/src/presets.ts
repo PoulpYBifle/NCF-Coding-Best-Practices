@@ -12,6 +12,9 @@ export const PRESETS: Record<PresetName, Preset> = {
     docs: ALL_DOCS,
     includeConstitution: true,
     includeSkillsGuide: false,
+    scaffoldProject: true,
+    dxTooling: true,
+    packages: [],
   },
   "fullstack-vite": {
     name: "fullstack-vite",
@@ -23,6 +26,9 @@ export const PRESETS: Record<PresetName, Preset> = {
     docs: ALL_DOCS,
     includeConstitution: true,
     includeSkillsGuide: false,
+    scaffoldProject: true,
+    dxTooling: true,
+    packages: [],
   },
   landing: {
     name: "landing",
@@ -43,6 +49,9 @@ export const PRESETS: Record<PresetName, Preset> = {
     ],
     includeConstitution: false,
     includeSkillsGuide: false,
+    scaffoldProject: true,
+    dxTooling: true,
+    packages: [],
   },
   minimal: {
     name: "minimal",
@@ -54,6 +63,9 @@ export const PRESETS: Record<PresetName, Preset> = {
     docs: ["principes", "qualite-code", "typescript-conventions", "configs-partagees"],
     includeConstitution: false,
     includeSkillsGuide: false,
+    scaffoldProject: false,
+    dxTooling: true,
+    packages: [],
   },
   all: {
     name: "all",
@@ -65,6 +77,9 @@ export const PRESETS: Record<PresetName, Preset> = {
     docs: ALL_DOCS,
     includeConstitution: true,
     includeSkillsGuide: true,
+    scaffoldProject: true,
+    dxTooling: true,
+    packages: ["bmad"],
   },
 };
 

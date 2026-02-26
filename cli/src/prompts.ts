@@ -4,11 +4,14 @@ import {
   ALL_AI_TOOLS,
   ALL_COMMANDS,
   ALL_DOCS,
+  ALL_OPTIONAL_PACKAGES,
   BACKEND_DOCS,
   COMMAND_LABELS,
   CORE_DOCS,
   DOC_LABELS,
   FRONTEND_DOCS,
+  OPTIONAL_PACKAGE_LABELS,
+  SCAFFOLD_COMMANDS,
 } from "./constants.js";
 import type {
   AiTool,
@@ -16,6 +19,7 @@ import type {
   Command,
   DocModule,
   FrontendStack,
+  OptionalPackage,
   ProjectType,
   UserChoices,
 } from "./types.js";
@@ -66,6 +70,20 @@ export async function runPrompts(targetDir: string, force: boolean): Promise<Use
     ],
   });
   handleCancel(backend);
+
+  // 3b. Scaffolding projet
+  const scaffoldKey = `${frontend as string}:${backend as string}`;
+  const scaffoldConfig = SCAFFOLD_COMMANDS[scaffoldKey];
+  let scaffoldProject = false;
+
+  if (scaffoldConfig) {
+    const scaffold = await p.confirm({
+      message: `Scaffolder le projet avec ${scaffoldConfig.command} ?`,
+      initialValue: true,
+    });
+    handleCancel(scaffold);
+    scaffoldProject = scaffold as boolean;
+  }
 
   // 4. Outils AI (multiselect)
   const aiTools = await p.multiselect({
@@ -160,6 +178,28 @@ export async function runPrompts(targetDir: string, force: boolean): Promise<Use
     includeSkillsGuide = skillsGuide as boolean;
   }
 
+  // 9. DX Tooling
+  const dxTooling = await p.confirm({
+    message: "Installer le DX Tooling ? (Husky, lint-staged, Prettier, ESLint, Commitlint, Vitest)",
+    initialValue: true,
+  });
+  handleCancel(dxTooling);
+
+  // 10. Packages optionnels
+  let packages: OptionalPackage[] = [];
+  if (ALL_OPTIONAL_PACKAGES.length > 0) {
+    const selectedPackages = await p.multiselect({
+      message: "Packages optionnels a installer ?",
+      options: ALL_OPTIONAL_PACKAGES.map((pkg) => ({
+        value: pkg,
+        label: OPTIONAL_PACKAGE_LABELS[pkg],
+      })),
+      required: false,
+    });
+    handleCancel(selectedPackages);
+    packages = selectedPackages as OptionalPackage[];
+  }
+
   p.outro("Configuration terminee ! Installation en cours...");
 
   return {
@@ -172,6 +212,9 @@ export async function runPrompts(targetDir: string, force: boolean): Promise<Use
     docs,
     includeConstitution: includeConstitution as boolean,
     includeSkillsGuide,
+    scaffoldProject,
+    dxTooling: dxTooling as boolean,
+    packages,
     force,
   };
 }
