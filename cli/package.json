@@ -1,15 +1,25 @@
 {
   "name": "create-ncf-aidd",
-  "version": "1.0.0",
-  "description": "CLI interactif pour scaffolder un projet avec les bonnes pratiques NCF-AIDD",
+  "version": "1.1.0",
+  "description": "CLI interactif pour scaffolder un projet avec les bonnes pratiques NCF AI-Driven Dev — Stack, Shadcn/ui, DX Tooling, configs AI, docs",
   "type": "module",
   "bin": {
     "create-ncf-aidd": "./dist/index.js"
   },
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PoulpYBifle/NCF-Coding-Best-Practices.git",
+    "directory": "cli"
+  },
+  "homepage": "https://github.com/PoulpYBifle/NCF-Coding-Best-Practices/tree/main/cli#readme",
+  "bugs": {
+    "url": "https://github.com/PoulpYBifle/NCF-Coding-Best-Practices/issues"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -20,10 +30,22 @@
     "ncf",
     "clean-code",
     "ai",
+    "ai-driven-dev",
     "scaffolding",
     "best-practices",
     "nextjs",
-    "typescript"
+    "typescript",
+    "shadcn",
+    "tailwind",
+    "husky",
+    "eslint",
+    "prettier",
+    "claude",
+    "cursor",
+    "copilot",
+    "create-app",
+    "starter",
+    "boilerplate"
   ],
   "author": "NoCodeFrance",
   "license": "MIT",
