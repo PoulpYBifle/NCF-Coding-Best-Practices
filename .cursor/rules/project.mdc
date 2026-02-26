@@ -1,3 +1,9 @@
+---
+description: Regles NCF pour projets Next.js + React + TypeScript. Securite, accessibilite, TDD, conventions.
+globs:
+alwaysApply: true
+---
+
 # NCF — Regles projet (Cursor)
 
 ## Stack

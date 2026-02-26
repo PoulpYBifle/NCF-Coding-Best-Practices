@@ -1,0 +1,20 @@
+# NCF — Configuration Aider
+# Documentation : https://aider.chat/docs/config/aider_conf.html
+
+# Fichiers de conventions charges automatiquement
+read:
+  - .ncf/docs/principes.md
+  - .ncf/docs/typescript-conventions.md
+  - .ncf/docs/qualite-code.md
+
+# Lint apres chaque edit
+lint-cmd:
+  - "npx eslint --fix"
+
+# Auto-commit avec format conventionnel
+auto-commits: true
+attribute-author: false
+attribute-committer: false
+
+# Git
+dirty-commits: false
