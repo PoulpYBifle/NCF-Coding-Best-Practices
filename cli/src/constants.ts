@@ -225,6 +225,58 @@ export const SCAFFOLD_COMMANDS: Record<string, ScaffoldConfig> = {
   },
 };
 
+// ── Shadcn/ui ──
+
+/** Composants Shadcn/ui a installer */
+export const SHADCN_COMPONENTS = [
+  "accordion",
+  "alert",
+  "alert-dialog",
+  "avatar",
+  "badge",
+  "breadcrumb",
+  "button",
+  "calendar",
+  "card",
+  "carousel",
+  "checkbox",
+  "collapsible",
+  "combobox",
+  "command",
+  "context-menu",
+  "data-table",
+  "date-picker",
+  "dialog",
+  "drawer",
+  "dropdown-menu",
+  "input",
+  "input-otp",
+  "label",
+  "menubar",
+  "navigation-menu",
+  "pagination",
+  "popover",
+  "progress",
+  "radio-group",
+  "resizable",
+  "scroll-area",
+  "select",
+  "separator",
+  "sheet",
+  "sidebar",
+  "skeleton",
+  "slider",
+  "sonner",
+  "switch",
+  "table",
+  "tabs",
+  "textarea",
+  "toast",
+  "toggle",
+  "toggle-group",
+  "tooltip",
+];
+
 // ── DX Tooling ──
 
 /** Packages DX a installer en devDependencies */

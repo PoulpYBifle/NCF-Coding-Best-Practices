@@ -15,6 +15,7 @@ import {
   OPTIONAL_PACKAGE_COMMANDS,
   OPTIONAL_PACKAGE_LABELS,
   SCAFFOLD_COMMANDS,
+  SHADCN_COMPONENTS,
 } from "./constants.js";
 import type { UserChoices } from "./types.js";
 
@@ -98,6 +99,20 @@ export async function install(choices: UserChoices): Promise<void> {
       runCommand(cmd, process.cwd(), scaffoldConfig.label);
       console.log();
     }
+  }
+
+  // ── 0b. Shadcn/ui ──
+  if (choices.includeShadcn) {
+    console.log(pc.cyan("Shadcn/ui"));
+
+    // Init shadcn avec defaults (zero interaction)
+    runCommand("npx shadcn@latest init -y", targetDir, "Initialisation Shadcn/ui");
+
+    // Installer tous les composants (zero interaction)
+    const components = SHADCN_COMPONENTS.join(" ");
+    runCommand(`npx shadcn@latest add ${components} -y -o`, targetDir, `Installation de ${SHADCN_COMPONENTS.length} composants`);
+
+    console.log();
   }
 
   // ── 1. AI Tool configs (chaque outil a son emplacement impose) ──
@@ -252,6 +267,10 @@ export async function install(choices: UserChoices): Promise<void> {
     console.log(`  4. ${pc.dim("Skills Claude :")} /ncf-frontend, /ncf-backend, /ncf-review`);
   } else if (choices.commands.length > 0) {
     console.log(`  3. ${pc.dim("Commandes disponibles dans")} .ncf/commands/`);
+  }
+
+  if (choices.includeShadcn) {
+    console.log(`  ${pc.dim("Shadcn/ui :")} ${SHADCN_COMPONENTS.length} composants installes`);
   }
 
   if (choices.dxTooling) {

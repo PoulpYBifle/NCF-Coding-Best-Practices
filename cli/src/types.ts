@@ -68,6 +68,7 @@ export interface UserChoices {
   includeConstitution: boolean;
   includeSkillsGuide: boolean;
   scaffoldProject: boolean;
+  includeShadcn: boolean;
   dxTooling: boolean;
   packages: OptionalPackage[];
   force: boolean;
@@ -84,6 +85,7 @@ export interface Preset {
   includeConstitution: boolean;
   includeSkillsGuide: boolean;
   scaffoldProject: boolean;
+  includeShadcn: boolean;
   dxTooling: boolean;
   packages: OptionalPackage[];
 }

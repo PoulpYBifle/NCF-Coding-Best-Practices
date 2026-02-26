@@ -85,6 +85,14 @@ export async function runPrompts(targetDir: string, force: boolean): Promise<Use
     scaffoldProject = scaffold as boolean;
   }
 
+  // 3c. Shadcn/ui (composants UI)
+  const shadcn = await p.confirm({
+    message: "Installer Shadcn/ui avec tous les composants ? (47 composants, zero interaction)",
+    initialValue: true,
+  });
+  handleCancel(shadcn);
+  const includeShadcn = shadcn as boolean;
+
   // 4. Outils AI (multiselect)
   const aiTools = await p.multiselect({
     message: "Outils AI a configurer ?",
@@ -213,6 +221,7 @@ export async function runPrompts(targetDir: string, force: boolean): Promise<Use
     includeConstitution: includeConstitution as boolean,
     includeSkillsGuide,
     scaffoldProject,
+    includeShadcn,
     dxTooling: dxTooling as boolean,
     packages,
     force,
