@@ -1,0 +1,42 @@
+{
+  "name": "create-ncf-aidd",
+  "version": "1.0.0",
+  "description": "CLI interactif pour scaffolder un projet avec les bonnes pratiques NCF-AIDD",
+  "type": "module",
+  "bin": {
+    "create-ncf-aidd": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "sync-templates": "tsx scripts/sync-templates.ts",
+    "prepublishOnly": "npm run sync-templates && npm run build"
+  },
+  "keywords": [
+    "ncf",
+    "clean-code",
+    "ai",
+    "scaffolding",
+    "best-practices",
+    "nextjs",
+    "typescript"
+  ],
+  "author": "NoCodeFrance",
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.9",
+    "commander": "^13",
+    "fs-extra": "^11",
+    "picocolors": "^1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11",
+    "@types/node": "^22",
+    "tsx": "^4",
+    "typescript": "^5.7"
+  }
+}

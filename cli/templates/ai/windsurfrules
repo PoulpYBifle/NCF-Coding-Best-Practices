@@ -1,0 +1,138 @@
+# NCF — Regles projet (Windsurf)
+
+## Stack
+
+Next.js 16 (App Router) · React · TypeScript · Tailwind CSS · Shadcn/ui · Zod · Zustand · Vitest
+
+Package manager : `bun` (priorite) ou `npm`. Monorepo : `pnpm`.
+
+## Reflexes de code (TOUJOURS, par defaut, sans y penser)
+
+La securite et l'accessibilite ne sont PAS des etapes de review. Ce sont des reflexes de generation. Chaque ligne de code nait securisee et accessible.
+
+### Securite — built-in a chaque ligne
+
+| Quand j'ecris... | J'ecris AUTOMATIQUEMENT... |
+|---|---|
+| Un `<input>` utilisateur | Validation Zod client + serveur, `.max()` sur le schema |
+| Une mutation backend | `requireAuth()` en ligne 1, `AppError({ code })` pour les erreurs |
+| Un `fetch()` externe | `if (!res.ok) throw`, validation Zod de la reponse |
+| Un champ texte libre | Limite `.max(200)` (titre) / `.max(2000)` (description) serveur-side |
+| Un `dangerouslySetInnerHTML` | `DOMPurify.sanitize()` — aucune exception |
+| Un redirect dynamique | Validation `/^\/(?!\/)/` (pas de `//` open redirect) |
+| Un cookie de session | `httpOnly: true, secure: true, sameSite: "lax"` |
+| Une variable d'environnement | Ajout dans `lib/env.ts` (schema Zod), crash au demarrage si manquante |
+| Un endpoint API | Auth check OU documentation explicite si public |
+| Un upload fichier | MIME type (magic bytes) + taille max serveur-side |
+
+### Accessibilite — built-in a chaque composant
+
+| Quand j'ecris... | J'ecris AUTOMATIQUEMENT... |
+|---|---|
+| Un `<input>` | `<label htmlFor="id">` associe OU `aria-label` — zero input orphelin |
+| Un `<input>` avec erreur | `aria-invalid={!!error}` + `aria-describedby="[id]-error"` |
+| Un `<img>` | `alt="description"` OU `alt=""` si decoratif |
+| Un element cliquable | `<button type="button">` — jamais `<div onClick>` |
+| Un dialog/modal | `aria-labelledby` + `aria-modal="true"` + focus trap |
+| Un toast/notification | Librairie avec `aria-live` (sonner le fait nativement) |
+| Un contenu dynamique | `aria-live="polite"` sur le conteneur |
+| Des styles interactifs | `:focus-visible` avec outline visible — jamais `outline: none` |
+| Une animation | `@media (prefers-reduced-motion: reduce)` respecte |
+| Une page | Skip link en premier element focusable |
+| Du texte | Contraste WCAG AA minimum (4.5:1 texte, 3:1 grands textes) |
+
+## Workflow obligatoire (chaque feature)
+
+5 phases dans l'ordre : EXPLORE → PLAN → TEST RED → CODE GREEN → VALIDATE
+
+### Phase 1 : EXPLORE
+1. Lire les fichiers existants lies a la feature
+2. Identifier les patterns en place — ne pas inventer un pattern different
+3. Verifier s'il existe deja un schema Zod, un hook, ou un composant reutilisable
+4. Si le scope est flou, demander des clarifications AVANT de coder
+
+### Phase 2 : PLAN
+1. Definir ce que le test doit verifier (comportement attendu, cas limites)
+2. Definir l'implementation (fichiers a creer/modifier)
+3. Identifier les surfaces de securite et besoins a11y
+
+### Phase 3 : TEST RED
+1. Ecrire le test AVANT le code
+2. Le test decrit le COMPORTEMENT attendu, pas l'implementation
+3. Inclure assertions securite + test a11y (`axe`)
+
+### Phase 4 : CODE GREEN
+1. Ecrire le MINIMUM de code pour que le test passe
+2. Appliquer les reflexes securite/a11y
+3. Lancer les tests — DOIT passer (green)
+
+### Phase 5 : VALIDATE
+1. `tsc --noEmit` — zero erreur TypeScript
+2. `vitest run` — tous les tests passent
+3. Pas de couleurs hardcodees, pas de console.log
+4. Commit conventionnel : `feat|fix|refactor(scope): description`
+
+## Regles non-negociables
+
+### Code
+- Zero `any` — utiliser `unknown` + type guard
+- Zero `as` sans `// EXCEPTION-TYPECAST: [raison]`
+- Composant > 300 lignes = decomposer. > 500 = interdit.
+- 1 fichier = 1 export principal
+- Pas de `useEffect` pour etat derive — `useMemo` ou calcul inline
+
+### Frontend
+- Server Component par defaut. `"use client"` uniquement si interactivite/hooks/APIs navigateur
+- Toute mutation : try/catch + toast.success/error
+- Toute route avec fetch async : `loading.tsx` + `error.tsx`
+- Tokens CSS uniquement — zero couleur/taille hardcodee
+
+### Backend
+- Toute mutation : AUTH → VALIDATION → VERIFICATION → OPERATION
+- Toute erreur : `AppError({ code, message })` avec code standardise
+- Toute liste : paginee et bornee (`limit` + `sort`)
+
+### Securite
+- Tout input utilisateur : valide avec Zod + `.max()` client ET serveur
+- Tout endpoint : auth check en ligne 1
+- Variables d'environnement validees avec Zod (`lib/env.ts`)
+- Cookies de session : `httpOnly`, `secure`, `sameSite: lax`
+- Schemas Zod partages dans `lib/schemas/`
+
+### Accessibilite
+- Tout `<input>` a un `<label>` ou `aria-label`
+- Tout interactif : `<button>` ou `<a>`, jamais `<div onClick>`
+- Tout `<img>` : `alt` descriptif ou `alt=""` si decoratif
+- `:focus-visible` sur tous les interactifs
+- Contraste WCAG AA : 4.5:1 texte, 3:1 grands textes
+
+## Conventions de nommage
+
+| Element | Convention |
+|---|---|
+| Composant, Type, Interface | PascalCase |
+| Fonction, variable, hook | camelCase |
+| Constante | UPPER_SNAKE_CASE |
+| Fichier composant | PascalCase.tsx |
+| Fichier utilitaire/hook | kebab-case.ts |
+| Schema Zod | camelCase + Schema |
+| Commit | feat\|fix\|refactor(scope): description |
+
+## Structure fichiers
+
+```
+app/                    ← Routes Next.js (App Router)
+  (auth)/               ← Routes publiques
+  (app)/                ← Routes protegees
+    [route]/page.tsx + loading.tsx + error.tsx
+components/
+  ui/                   ← Shadcn (NE PAS MODIFIER)
+  layout/               ← Shell, Sidebar, TopBar
+  [domaine]/            ← Composants par domaine metier
+lib/
+  schemas/              ← Schemas Zod partages (source de verite)
+  stores/               ← Zustand (1 store = 1 domaine)
+  hooks/                ← Hooks customs reutilisables
+  env.ts                ← Validation variables d'environnement
+  utils.ts              ← cn(), formatDate(), etc.
+```
