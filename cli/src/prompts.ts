@@ -10,7 +10,7 @@ import {
   CORE_DOCS,
   DOC_LABELS,
   FRONTEND_DOCS,
-  OPTIONAL_PACKAGE_LABELS,
+  OPTIONAL_PACKAGES_CONFIG,
   SCAFFOLD_COMMANDS,
 } from "./constants.js";
 import type {
@@ -193,15 +193,19 @@ export async function runPrompts(targetDir: string, force: boolean): Promise<Use
   });
   handleCancel(dxTooling);
 
-  // 10. Packages optionnels
+  // 10. Packages optionnels (addons)
   let packages: OptionalPackage[] = [];
   if (ALL_OPTIONAL_PACKAGES.length > 0) {
     const selectedPackages = await p.multiselect({
-      message: "Packages optionnels a installer ?",
-      options: ALL_OPTIONAL_PACKAGES.map((pkg) => ({
-        value: pkg,
-        label: OPTIONAL_PACKAGE_LABELS[pkg],
-      })),
+      message: "Addons a installer ?",
+      options: ALL_OPTIONAL_PACKAGES.map((pkg) => {
+        const config = OPTIONAL_PACKAGES_CONFIG[pkg];
+        return {
+          value: pkg,
+          label: config.label,
+          hint: config.hint,
+        };
+      }),
       required: false,
     });
     handleCancel(selectedPackages);

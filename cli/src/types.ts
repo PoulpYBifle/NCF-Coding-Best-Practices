@@ -43,7 +43,21 @@ export type DocModule =
   | "gestion-erreurs"
   | "configs-partagees";
 
-export type OptionalPackage = "bmad";
+export type OptionalPackage =
+  | "tailwind"
+  | "zod"
+  | "zustand"
+  | "framer-motion"
+  | "resend"
+  | "vercel-ai"
+  | "bmad";
+
+export interface OptionalPackageConfig {
+  label: string;
+  hint?: string;
+  npmPackages?: string[];
+  npxCommand?: string;
+}
 
 export type PresetName =
   | "fullstack-next"

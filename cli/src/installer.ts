@@ -12,8 +12,7 @@ import {
   DOC_FILES,
   DX_CONFIG_FILES,
   DX_PACKAGES,
-  OPTIONAL_PACKAGE_COMMANDS,
-  OPTIONAL_PACKAGE_LABELS,
+  OPTIONAL_PACKAGES_CONFIG,
   SCAFFOLD_COMMANDS,
   SHADCN_COMPONENTS,
 } from "./constants.js";
@@ -236,14 +235,41 @@ export async function install(choices: UserChoices): Promise<void> {
     console.log();
   }
 
-  // ── 8. Packages optionnels ──
+  // ── 8. Packages optionnels (addons) ──
   if (choices.packages.length > 0) {
-    console.log(pc.cyan("Packages optionnels"));
+    console.log(pc.cyan("Addons"));
+
+    const pm = choices.dxTooling ? detectPackageManager() : detectPackageManager();
+    const installCmd = pm === "bun" ? "bun add" : "npm install";
+
+    // Collecter tous les packages npm en une seule commande
+    const npmPkgs: string[] = [];
+    const npxCommands: { cmd: string; label: string }[] = [];
+
     for (const pkg of choices.packages) {
-      const cmd = OPTIONAL_PACKAGE_COMMANDS[pkg];
-      const label = OPTIONAL_PACKAGE_LABELS[pkg];
+      const config = OPTIONAL_PACKAGES_CONFIG[pkg];
+      if (config.npmPackages) {
+        npmPkgs.push(...config.npmPackages);
+      }
+      if (config.npxCommand) {
+        npxCommands.push({ cmd: config.npxCommand, label: config.label });
+      }
+    }
+
+    // Installer tous les packages npm en une seule commande
+    if (npmPkgs.length > 0) {
+      const pkgNames = choices.packages
+        .filter((p) => OPTIONAL_PACKAGES_CONFIG[p].npmPackages)
+        .map((p) => OPTIONAL_PACKAGES_CONFIG[p].label)
+        .join(", ");
+      runCommand(`${installCmd} ${npmPkgs.join(" ")}`, targetDir, pkgNames);
+    }
+
+    // Lancer les commandes npx separement
+    for (const { cmd, label } of npxCommands) {
       runCommand(cmd, targetDir, label);
     }
+
     console.log();
   }
 
@@ -278,8 +304,8 @@ export async function install(choices: UserChoices): Promise<void> {
   }
 
   if (choices.packages.length > 0) {
-    const pkgNames = choices.packages.map((pkg) => OPTIONAL_PACKAGE_LABELS[pkg]).join(", ");
-    console.log(`  ${pc.dim("Packages optionnels :")} ${pkgNames}`);
+    const pkgNames = choices.packages.map((pkg) => OPTIONAL_PACKAGES_CONFIG[pkg].label).join(", ");
+    console.log(`  ${pc.dim("Addons installes :")} ${pkgNames}`);
   }
 
   console.log();

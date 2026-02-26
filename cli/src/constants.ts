@@ -1,4 +1,4 @@
-import type { AiTool, Command, DocModule, OptionalPackage, ScaffoldConfig } from "./types.js";
+import type { AiTool, Command, DocModule, OptionalPackage, OptionalPackageConfig, ScaffoldConfig } from "./types.js";
 
 /**
  * Mapping AI tool → fichiers a copier.
@@ -305,12 +305,44 @@ export const DX_CONFIG_FILES = [
 
 // ── Packages optionnels ──
 
-export const OPTIONAL_PACKAGE_LABELS: Record<OptionalPackage, string> = {
-  bmad: "BMAD Method (methode de prompting structuree)",
+export const OPTIONAL_PACKAGES_CONFIG: Record<OptionalPackage, OptionalPackageConfig> = {
+  tailwind: {
+    label: "Tailwind CSS",
+    hint: "deja inclus si Shadcn ou create-next-app",
+    npmPackages: ["tailwindcss", "@tailwindcss/postcss"],
+  },
+  zod: {
+    label: "Zod (validation de schemas)",
+    npmPackages: ["zod"],
+  },
+  zustand: {
+    label: "Zustand (state management)",
+    npmPackages: ["zustand"],
+  },
+  "framer-motion": {
+    label: "Framer Motion (animations)",
+    npmPackages: ["framer-motion"],
+  },
+  resend: {
+    label: "Resend (emails transactionnels)",
+    npmPackages: ["resend"],
+  },
+  "vercel-ai": {
+    label: "Vercel AI SDK",
+    npmPackages: ["ai", "@ai-sdk/openai", "@ai-sdk/anthropic"],
+  },
+  bmad: {
+    label: "BMAD Method (methode de prompting structuree)",
+    npxCommand: "npx bmad-method install",
+  },
 };
 
-export const OPTIONAL_PACKAGE_COMMANDS: Record<OptionalPackage, string> = {
-  bmad: "npx bmad-method install",
-};
-
-export const ALL_OPTIONAL_PACKAGES: OptionalPackage[] = ["bmad"];
+export const ALL_OPTIONAL_PACKAGES: OptionalPackage[] = [
+  "tailwind",
+  "zod",
+  "zustand",
+  "framer-motion",
+  "resend",
+  "vercel-ai",
+  "bmad",
+];

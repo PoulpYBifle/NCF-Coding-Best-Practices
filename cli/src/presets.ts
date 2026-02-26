@@ -1,4 +1,4 @@
-import { ALL_AI_TOOLS, ALL_COMMANDS, ALL_DOCS } from "./constants.js";
+import { ALL_AI_TOOLS, ALL_COMMANDS, ALL_DOCS, ALL_OPTIONAL_PACKAGES } from "./constants.js";
 import type { Preset, PresetName } from "./types.js";
 
 export const PRESETS: Record<PresetName, Preset> = {
@@ -84,7 +84,7 @@ export const PRESETS: Record<PresetName, Preset> = {
     scaffoldProject: true,
     includeShadcn: true,
     dxTooling: true,
-    packages: ["bmad"],
+    packages: ALL_OPTIONAL_PACKAGES,
   },
 };
 
